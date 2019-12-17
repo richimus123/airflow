@@ -33,6 +33,7 @@ from airflow import models, LoggingMixin
 from airflow.configuration import conf
 from airflow.models.connection import Connection
 from airflow.settings import Session
+from airflow.version import version
 
 from airflow.www.blueprints import routes
 from airflow.logging_config import configure_logging
@@ -126,9 +127,14 @@ def create_app(config=None, testing=False):
         av(vs.XComView(
             models.XCom, Session, name="XComs", category="Admin"))
 
+        if "dev" in version.version:
+            airflow_doc_site = "https://airflow.readthedocs.io/en/latest"
+        else:
+            airflow_doc_site = 'https://airflow.apache.org/docs/{}'.format(version.version)
+
         admin.add_link(base.MenuLink(
             category='Docs', name='Documentation',
-            url='https://airflow.apache.org/'))
+            url=airflow_doc_site))
         admin.add_link(
             base.MenuLink(category='Docs',
                           name='GitHub',
